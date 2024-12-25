@@ -8,7 +8,8 @@ export type UserPreference = {
 
 const useTheme = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(false); // Default theme
-  const [themePreference, setThemePreference] = useState<UserPreference["theme"]>("system");
+  const [themePreference, setThemePreference] =
+    useState<UserPreference["theme"]>("system");
 
   const getCurrentDeviceTheme = () =>
     typeof window !== "undefined" &&
@@ -16,14 +17,18 @@ const useTheme = () => {
 
   const updateTheme = (theme: UserPreference["theme"]) => {
     setThemePreference(theme);
-    setIsDarkTheme(
-      theme === "system" ? getCurrentDeviceTheme() : theme === "dark"
-    );
+    const isDark =
+      theme === "system" ? getCurrentDeviceTheme() : theme === "dark";
+    setIsDarkTheme(isDark);
+
+    // Update the `html` class
+    document.documentElement.classList.toggle("theme-dark", isDark);
+    document.documentElement.classList.toggle("theme-light", !isDark);
+
     localStorage.setItem("user-preferences", JSON.stringify({ theme }));
   };
 
   useEffect(() => {
-    // Only execute in the browser
     if (typeof window === "undefined") return;
 
     const storedPreferences = localStorage.getItem("user-preferences");
@@ -31,25 +36,13 @@ const useTheme = () => {
       ? JSON.parse(storedPreferences)
       : { theme: "system" };
 
-    setThemePreference(userPreference.theme);
-
-    setIsDarkTheme(
+    const isDark =
       userPreference.theme === "system"
         ? getCurrentDeviceTheme()
-        : userPreference.theme === "dark"
-    );
+        : userPreference.theme === "dark";
 
-    // Listen for system theme changes
-    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (userPreference.theme === "system") {
-        setIsDarkTheme(e.matches);
-      }
-    };
-
-    darkThemeMq.addEventListener("change", handleChange);
-
-    return () => darkThemeMq.removeEventListener("change", handleChange);
+    setThemePreference(userPreference.theme);
+    setIsDarkTheme(isDark);
   }, []);
 
   return { isDarkTheme, themePreference, updateTheme };

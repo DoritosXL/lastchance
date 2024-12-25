@@ -46,17 +46,17 @@ export default function MainPage() {
           className="flex items-center justify-center text-inherit"
         >
           <GithubLogoSVG theme={isDarkTheme ? "dark" : "light"} />
-          DoritosXL
+          <p className="ml-1">DoritosXL</p>
         </a>
         <a
           href="https://github.com/UNRULYEON"
           className="flex items-center justify-center text-inherit"
         >
           <GithubLogoSVG theme={isDarkTheme ? "dark" : "light"} />
-          UNRULYEON
+          <p className="ml-1">UNRULYEON</p>
         </a>
       </div>
-      <div className="mt-5 flex flex-col items-center sm:flex-row gap-3">
+      <div className="my-5 flex flex-col items-center sm:flex-row gap-3">
         <label className="flex items-center cursor-pointer">
           <input
             type="checkbox"

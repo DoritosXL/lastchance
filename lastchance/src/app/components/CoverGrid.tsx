@@ -1,9 +1,16 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-import { TwitterPicker } from "react-color";
 import { motion } from "framer-motion";
-import Popover from "@mui/material/Popover";
+import Dialog from "@mui/material/Dialog";
+import dynamic from "next/dynamic";
+
+const TwitterPicker = dynamic(
+  () => import("react-color/lib/components/twitter/Twitter"),
+  { ssr: false }
+);
+const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
 
 type Emoji = {
   id: string;
@@ -64,10 +71,15 @@ const randomEmojis = (): EmojiDisplay[] => {
 };
 
 const CoverGrid = () => {
-  const [emojis, setEmojis] = useState<EmojiDisplay[]>(randomEmojis());
   const [selected, setSelected] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [color, setColor] = useState("#fff");
+  const [emojis, setEmojis] = useState<EmojiDisplay[]>([]);
+
+  useEffect(() => {
+    // Generate emojis on the client side
+    setEmojis(randomEmojis());
+  }, []);
 
   const handleEmojiClick = (
     index: number,
@@ -173,14 +185,14 @@ const CoverGrid = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <div className="grid-body w-full max-w-[90vw] mx-auto mt-4 mb-6 p-2">
+      <div className="grid-body w-full mx-auto mt-4 mb-6 p-2">
         <div className="cover relative w-full h-auto aspect-square bg-white flex justify-center items-center rounded-md shadow-md">
           <div className="emoji-grid grid grid-cols-4 grid-rows-3 gap-2">
             {emojis.map((emoji, index) => (
               <div
                 key={index}
                 className={`emoji-container flex justify-center items-center transition-opacity opacity-100 ${
-                  selected === index ? "ring-2 ring-blue-400" : ""
+                  selected === index ? "ring-2 ring-blue-400 rounded" : ""
                 }`}
               >
                 <motion.button
@@ -232,13 +244,7 @@ const CoverGrid = () => {
         />
       </div>
 
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        transformOrigin={{ vertical: "top", horizontal: "center" }}
-      >
+      <Dialog open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
         <Picker
           data={data}
           onEmojiSelect={(emoji: Emoji) =>
@@ -246,21 +252,23 @@ const CoverGrid = () => {
           }
           theme="light"
         />
-        <button
-          onClick={() => {
-            if (selected !== null) {
-              const updatedEmojis = [...emojis];
-              updatedEmojis[selected] = { id: "", native: "" };
-              setEmojis(updatedEmojis);
-              setSelected(null);
-              setAnchorEl(null);
-            }
-          }}
-          className="mt-4 w-full px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition"
-        >
-          Delete Emoji
-        </button>
-      </Popover>
+        <div className="p-4">
+          <button
+            onClick={() => {
+              if (selected !== null) {
+                const updatedEmojis = [...emojis];
+                updatedEmojis[selected] = { id: "", native: "" };
+                setEmojis(updatedEmojis);
+                setSelected(null);
+                setAnchorEl(null);
+              }
+            }}
+            className="mt-4 w-full px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition"
+          >
+            Delete Emoji
+          </button>
+        </div>
+      </Dialog>
     </div>
   );
 };
