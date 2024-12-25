@@ -28,7 +28,7 @@ const useTheme = () => {
     darkThemeMq.addEventListener("change", (e) => {
       if (userPreference.theme === "system") setIsDarkTheme(e.matches);
     });
-    return () => darkThemeMq.removeEventListener("change", (e) => {});
+    return () => darkThemeMq.removeEventListener("change", () => {});
   }, [userPreference.theme]);
 
   return { isDarkTheme, updateTheme };
