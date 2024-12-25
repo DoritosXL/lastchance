@@ -108,15 +108,23 @@ const CoverGrid = () => {
   };
 
   const handleDownload = () => {
+    const scale = 8; // Scale for higher resolution (e.g., 2x)
     const canvas = document.createElement("canvas");
-    canvas.width = 800;
-    canvas.height = 800;
+    const width = 800;
+    const height = 800;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
     const ctx = canvas.getContext("2d");
 
     if (!ctx) {
       console.error("Canvas context could not be created.");
       return;
     }
+
+    ctx.scale(scale, scale); // Apply scaling
 
     let hasEmojis = false;
 
@@ -133,14 +141,14 @@ const CoverGrid = () => {
     } else {
       ctx.fillStyle = color; // User-selected background color
     }
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, width, height);
 
     // Adjust margins and spacing
     const gridRows = 3;
     const gridCols = 4;
     const padding = 20; // Padding around the grid
-    const cellWidth = (canvas.width - 2 * padding) / gridCols;
-    const cellHeight = (canvas.height - 2 * padding) / gridRows;
+    const cellWidth = (width - 2 * padding) / gridCols;
+    const cellHeight = (height - 2 * padding) / gridRows;
     const emojiSize = Math.min(cellWidth, cellHeight) * 0.8; // Adjust emoji size relative to cell size
 
     // Draw emojis in a 4x3 grid with proper spacing
