@@ -241,7 +241,7 @@ const CoverGrid = () => {
       >
         <Picker
           data={data}
-          onEmojiSelect={(emoji: any) =>
+          onEmojiSelect={(emoji: Emoji) =>
             handleReplaceEmoji({ id: emoji.id, native: emoji.native })
           }
           theme="light"
