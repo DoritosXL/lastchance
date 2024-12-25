@@ -27,16 +27,16 @@ export default function MainPage() {
       } transition-colors duration-300 ease-in min-h-screen flex flex-col items-center px-4`}
     >
       <svg
-        className="w-full max-w-[200px] sm:max-w-[300px] mt-8 sm:mt-12 mb-6"
+        className="w-full max-w-[150px] sm:max-w-[200px] mt-8 sm:mt-12 mb-6"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 248.2 194.78"
       >
         <ClbLogoSVG isDarkTheme={isDarkTheme ? "dark" : "light"} />
       </svg>
-      <h1 className="mb-3 text-xl font-extrabold text-center sm:text-2xl">
+      <h1 className="text-base font-extrabold text-center sm:text-lg">
         Cover Generator
       </h1>
-      <h2 className="mb-6 text-sm font-normal text-center sm:text-lg">
+      <h2 className="text-sm font-normal text-center sm:text-base">
         Click on an emoji to edit or remove
       </h2>
       <CoverGrid />

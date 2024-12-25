@@ -143,7 +143,7 @@ const CoverGrid = () => {
     }
     ctx.fillRect(0, 0, width, height);
 
-    // Adjust margins and spacing
+        // Adjust margins and spacing
     const gridRows = 3;
     const gridCols = 4;
     const padding = 20; // Padding around the grid
@@ -151,7 +151,7 @@ const CoverGrid = () => {
     const cellHeight = (height - 2 * padding) / gridRows;
     const emojiSize = Math.min(cellWidth, cellHeight) * 0.8; // Adjust emoji size relative to cell size
 
-    // Draw emojis in a 4x3 grid with proper spacing
+        // Draw emojis in a 4x3 grid with proper spacing
     if (hasEmojis) {
       emojis.forEach((emoji, index) => {
         const col = index % gridCols;
@@ -161,11 +161,10 @@ const CoverGrid = () => {
         const y = padding + row * cellHeight + cellHeight / 2;
 
         if (emoji.native) {
-          // Draw emoji
           ctx.font = `${emojiSize}px Arial`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillStyle = "#000"; // Emoji color
+          ctx.fillStyle = "#000";
           ctx.fillText(emoji.native, x, y);
         }
       });
@@ -177,7 +176,6 @@ const CoverGrid = () => {
       fileName = "DONDA.png"; // Grid is empty
     }
 
-    // Convert canvas to image and download
     const imageData = canvas.toDataURL("image/png");
     const downloadLink = document.createElement("a");
     downloadLink.href = imageData;
@@ -192,9 +190,9 @@ const CoverGrid = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <div className="grid-body w-full mx-auto mt-4 mb-6 p-2">
-        <div className="cover relative w-full h-auto aspect-square bg-white flex justify-center items-center rounded-md shadow-md">
+    <div className="flex flex-col items-center mt-1">
+      <div className="grid-body mx-auto">
+        <div className="cover relative h-auto aspect-square bg-white flex justify-center items-center rounded-md shadow-md px-4 m-auto w-fit">
           <div className="emoji-grid grid grid-cols-4 grid-rows-3 gap-2">
             {emojis.map((emoji, index) => (
               <div
@@ -222,22 +220,22 @@ const CoverGrid = () => {
           </div>
         </div>
 
-        <div className="actions flex flex-col gap-3 mt-6">
+        <div className="actions flex flex-col md:flex-row gap-3 mt-6">
           <button
             onClick={handleRegenerateGrid}
-            className="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+            className="w-full md:w-auto px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
           >
             Regenerate Grid
           </button>
           <button
             onClick={handleClearGrid}
-            className="w-full px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition"
+            className="w-full md:w-auto px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition"
           >
             Remove All Emojis
           </button>
           <button
             onClick={handleDownload}
-            className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
           >
             Download Cover
           </button>
@@ -252,29 +250,42 @@ const CoverGrid = () => {
         />
       </div>
 
-      <Dialog open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <Picker
-          data={data}
-          onEmojiSelect={(emoji: Emoji) =>
-            handleReplaceEmoji({ id: emoji.id, native: emoji.native })
-          }
-          theme="light"
-        />
-        <div className="p-4">
-          <button
-            onClick={() => {
-              if (selected !== null) {
-                const updatedEmojis = [...emojis];
-                updatedEmojis[selected] = { id: "", native: "" };
-                setEmojis(updatedEmojis);
-                setSelected(null);
-                setAnchorEl(null);
-              }
-            }}
-            className="mt-4 w-full px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition"
-          >
-            Delete Emoji
-          </button>
+      <Dialog
+        className="w-auto"
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        sx={{
+          "& .MuiPaper-root": {
+            margin: 0,
+            padding: 0,
+          },
+        }}
+      >
+        <div className="w-full max-w-sm mx-auto">
+          <Picker
+            style={{ margin: "0 !important" }}
+            data={data}
+            onEmojiSelect={(emoji: Emoji) =>
+              handleReplaceEmoji({ id: emoji.id, native: emoji.native })
+            }
+            theme="light"
+          />
+          <div className="p-4">
+            <button
+              onClick={() => {
+                if (selected !== null) {
+                  const updatedEmojis = [...emojis];
+                  updatedEmojis[selected] = { id: "", native: "" };
+                  setEmojis(updatedEmojis);
+                  setSelected(null);
+                  setAnchorEl(null);
+                }
+              }}
+              className="mt-4 w-full px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition"
+            >
+              Delete Emoji
+            </button>
+          </div>
         </div>
       </Dialog>
     </div>
