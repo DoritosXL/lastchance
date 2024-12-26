@@ -5,6 +5,7 @@ import data from "@emoji-mart/data";
 import { motion } from "framer-motion";
 import Dialog from "@mui/material/Dialog";
 import dynamic from "next/dynamic";
+import { downloadCover } from "../utils/handleDownload";
 
 const TwitterPicker = dynamic(
   () => import("react-color/lib/components/twitter/Twitter"),
@@ -35,7 +36,7 @@ type EmojiDataType = {
   sheet: { cols: number; rows: number };
 };
 
-type EmojiDisplay = {
+export type EmojiDisplay = {
   id: string;
   native: string;
 };
@@ -75,6 +76,21 @@ const CoverGrid = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [color, setColor] = useState("#fff");
   const [emojis, setEmojis] = useState<EmojiDisplay[]>([]);
+  const handleDownload = () => {
+    const isMobile = window.innerWidth <= 768; // Simple check for mobile devices
+    downloadCover(emojis, color, isMobile);
+  };
+
+  // const handleDownload = () => {
+  //   const isMobile = window.innerWidth <= 768;
+  //   const backgroundColor = color;
+
+  //   if (isMobile) {
+  //     downloadEmojiGridSVG(emojis, backgroundColor); // SVG for mobile
+  //   } else {
+  //     downloadCover(emojis, color, isMobile)
+  //   }
+  // };
 
   useEffect(() => {
     // Generate emojis on the client side
@@ -107,84 +123,6 @@ const CoverGrid = () => {
     setEmojis(randomEmojis());
   };
 
-  const handleDownload = () => {
-    const scale = 8; // Scale for higher resolution (e.g., 2x)
-    const canvas = document.createElement("canvas");
-    const width = 800;
-    const height = 800;
-    canvas.width = width * scale;
-    canvas.height = height * scale;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) {
-      console.error("Canvas context could not be created.");
-      return;
-    }
-
-    ctx.scale(scale, scale); // Apply scaling
-
-    let hasEmojis = false;
-
-    // Check if the grid is empty (DONDA condition)
-    emojis.forEach((emoji) => {
-      if (emoji.native) {
-        hasEmojis = true;
-      }
-    });
-
-    // Set background color based on the condition
-    if (!hasEmojis) {
-      ctx.fillStyle = "#000000"; // Black background for empty grid
-    } else {
-      ctx.fillStyle = color; // User-selected background color
-    }
-    ctx.fillRect(0, 0, width, height);
-
-        // Adjust margins and spacing
-    const gridRows = 3;
-    const gridCols = 4;
-    const padding = 20; // Padding around the grid
-    const cellWidth = (width - 2 * padding) / gridCols;
-    const cellHeight = (height - 2 * padding) / gridRows;
-    const emojiSize = Math.min(cellWidth, cellHeight) * 0.8; // Adjust emoji size relative to cell size
-
-        // Draw emojis in a 4x3 grid with proper spacing
-    if (hasEmojis) {
-      emojis.forEach((emoji, index) => {
-        const col = index % gridCols;
-        const row = Math.floor(index / gridCols);
-
-        const x = padding + col * cellWidth + cellWidth / 2;
-        const y = padding + row * cellHeight + cellHeight / 2;
-
-        if (emoji.native) {
-          ctx.font = `${emojiSize}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillStyle = "#000";
-          ctx.fillText(emoji.native, x, y);
-        }
-      });
-    }
-
-    // Determine file name based on conditions
-    let fileName = "CLB.png"; // Default file name
-    if (!hasEmojis) {
-      fileName = "DONDA.png"; // Grid is empty
-    }
-
-    const imageData = canvas.toDataURL("image/png");
-    const downloadLink = document.createElement("a");
-    downloadLink.href = imageData;
-    downloadLink.download = fileName;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-  };
-
   useEffect(() => {
     setEmojis(randomEmojis());
   }, []);
@@ -193,7 +131,7 @@ const CoverGrid = () => {
     <div className="flex flex-col items-center mt-1">
       <div className="grid-body mx-auto">
         <div className="cover relative h-auto aspect-square bg-white flex justify-center items-center rounded-md shadow-md px-4 m-auto w-fit">
-          <div className="emoji-grid grid grid-cols-4 grid-rows-3 gap-2">
+          <div className="emoji-grid grid grid-cols-4 grid-rows-3 gap-2 motion-preset-fade ">
             {emojis.map((emoji, index) => (
               <div
                 key={index}
@@ -202,14 +140,18 @@ const CoverGrid = () => {
                 }`}
               >
                 <motion.button
+                  key={emoji.id}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  whileHover={{ scale: emoji.native === "" ? 1 : 1.1 }}
+                  whileTap={{ scale: emoji.native === "" ? 1 : 0.95 }}
+                  transition={{ duration: 0.3 }}
                   className={`emoji-button w-[20vw] h-[20vw] max-w-[80px] max-h-[80px] rounded-lg flex justify-center items-center ${
                     emoji.native === ""
                       ? "bg-gray-200"
                       : "bg-transparent hover:ring-2 hover:ring-blue-300"
                   }`}
                   onClick={(e) => handleEmojiClick(index, e)}
-                  whileHover={{ scale: emoji.native === "" ? 1 : 1.1 }}
-                  whileTap={{ scale: emoji.native === "" ? 1 : 0.95 }}
                 >
                   <span className="text-5xl md:text-5xl">
                     {emoji.native || ""}
@@ -227,22 +169,23 @@ const CoverGrid = () => {
           >
             Regenerate Grid
           </button>
+
           <button
             onClick={handleClearGrid}
-            className="w-full md:w-auto px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition"
+            className="w-full md:w-auto px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition motion-preset-slide-right-sm"
           >
             Remove All Emojis
           </button>
           <button
             onClick={handleDownload}
-            className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition hover:animate-pulse"
           >
             Download Cover
           </button>
         </div>
       </div>
 
-      <div className="mt-5 w-full max-w-[90vw]">
+      <div className="mt-5 w-full max-w-[90vw] animate-fade-in">
         <TwitterPicker
           color={color}
           onChangeComplete={(color) => setColor(color.hex)}
@@ -251,7 +194,7 @@ const CoverGrid = () => {
       </div>
 
       <Dialog
-        className="w-auto"
+        className="w-auto animate-slide-up"
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
         sx={{
