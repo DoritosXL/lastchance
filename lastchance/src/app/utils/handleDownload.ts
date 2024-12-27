@@ -33,17 +33,17 @@ export const downloadCover = (
 
   const gridRows = 3;
   const gridCols = 4;
-  const padding = 20;
+  const padding = 40;
   const cellWidth = (width - 2 * padding) / gridCols;
   const cellHeight = (height - 2 * padding) / gridRows;
-  const emojiSize = Math.min(cellWidth, cellHeight) * 0.8;
+  const emojiSize = Math.min(cellWidth, cellHeight) * 1;
 
   if (hasEmojis) {
     emojis.forEach((emoji, index) => {
       const col = index % gridCols;
       const row = Math.floor(index / gridCols);
-      const x = padding + col * cellWidth + cellWidth / 2;
-      const y = padding + row * cellHeight + cellHeight / 2;
+      const x = padding + col * cellWidth + cellWidth * 0.5;
+      const y = padding + row * cellHeight + cellHeight * 0.5;
 
       if (emoji.native) {
         ctx.font = `${emojiSize}px Arial`;

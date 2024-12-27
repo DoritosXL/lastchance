@@ -11,6 +11,7 @@ const TwitterPicker = dynamic(
   () => import("react-color/lib/components/twitter/Twitter"),
   { ssr: false }
 );
+
 const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
 
 type Emoji = {
@@ -80,17 +81,6 @@ const CoverGrid = () => {
     const isMobile = window.innerWidth <= 768; // Simple check for mobile devices
     downloadCover(emojis, color, isMobile);
   };
-
-  // const handleDownload = () => {
-  //   const isMobile = window.innerWidth <= 768;
-  //   const backgroundColor = color;
-
-  //   if (isMobile) {
-  //     downloadEmojiGridSVG(emojis, backgroundColor); // SVG for mobile
-  //   } else {
-  //     downloadCover(emojis, color, isMobile)
-  //   }
-  // };
 
   useEffect(() => {
     // Generate emojis on the client side
@@ -172,24 +162,43 @@ const CoverGrid = () => {
 
           <button
             onClick={handleClearGrid}
-            className="w-full md:w-auto px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition motion-preset-slide-right-sm"
+            className="w-full md:w-auto px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition"
           >
             Remove All Emojis
           </button>
           <button
             onClick={handleDownload}
-            className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition hover:animate-pulse"
+            className="w-full md:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
           >
             Download Cover
           </button>
         </div>
       </div>
 
-      <div className="mt-5 w-full max-w-[90vw] animate-fade-in">
+      <div className="mt-5 w-full animate-fade-in md:w-[60%]">
         <TwitterPicker
+          triangle="top-right"
           color={color}
           onChangeComplete={(color) => setColor(color.hex)}
           width="100%"
+          colors={[
+            "#FF0000", // Red
+            "#00FF00", // Green
+            "#0000FF", // Blue
+            "#FFFF00", // Yellow
+            "#FFA500", // Orange
+            "#800080", // Purple
+            "#00FFFF", // Cyan
+            "#FF00FF", // Magenta
+            "#000000", // Black
+            "#FFFFFF", // White
+            "#808080", // Gray
+            "#8B4513", // Brown
+            "#FFC0CB", // Pink
+            "#1E90FF", // Dodger Blue
+            "#32CD32", // Lime Green
+            "#FFD700", // Gold
+          ]}
         />
       </div>
 

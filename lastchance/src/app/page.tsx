@@ -5,6 +5,9 @@ import useTheme from "./components/useTheme";
 import CoverGrid from "./components/CoverGrid";
 import GithubLogoSVG from "./components/GithubLogoSVG";
 import ClbLogoSVG from "./components/ClbLogo";
+import {
+  TypewriterEffectSmooth,
+} from "./components/typewriterEffect";
 
 export default function MainPage() {
   const { isDarkTheme, updateTheme } = useTheme();
@@ -19,6 +22,33 @@ export default function MainPage() {
       htmlElement.className = isDarkTheme ? "theme-dark" : "theme-light";
     }
   }, [isDarkTheme]);
+
+  const words = [
+    {
+      text: "Click",
+    },
+    {
+      text: "on",
+    },
+    {
+      text: "an",
+    },
+    {
+      text: "emoji",
+    },
+    {
+      text: "to",
+    },
+    {
+      text: "edit",
+    },
+    {
+      text: "or",
+    },
+    {
+      text: "remove",
+    },
+  ];
 
   return (
     <div
@@ -36,24 +66,25 @@ export default function MainPage() {
       <h1 className="text-base font-extrabold text-center sm:text-lg">
         Cover Generator
       </h1>
-      <h2 className="text-sm font-normal text-center sm:text-base">
-        Click on an emoji to edit or remove
+
+      <h2 className="text-sm font-normal text-center sm:text-base before:animate-typewriter">
+        <TypewriterEffectSmooth words={words} />
       </h2>
       <CoverGrid />
       <div className="my-6 flex flex-col sm:flex-row gap-3 font-bold text-center">
-        <a
-          href="https://github.com/DoritosXL"
-          className="flex items-center justify-center text-inherit"
-        >
-          <GithubLogoSVG theme={isDarkTheme ? "dark" : "light"} />
-          <p className="ml-1">DoritosXL</p>
-        </a>
         <a
           href="https://github.com/UNRULYEON"
           className="flex items-center justify-center text-inherit"
         >
           <GithubLogoSVG theme={isDarkTheme ? "dark" : "light"} />
           <p className="ml-1">UNRULYEON</p>
+        </a>
+        <a
+          href="https://github.com/DoritosXL"
+          className="flex items-center justify-center text-inherit"
+        >
+          <GithubLogoSVG theme={isDarkTheme ? "dark" : "light"} />
+          <p className="ml-1">DoritosXL</p>
         </a>
       </div>
       <div className="my-5 flex flex-col items-center sm:flex-row gap-3">
